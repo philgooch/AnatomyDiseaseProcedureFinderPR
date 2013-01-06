@@ -1,0 +1,192 @@
+Imports: {
+	import static gate.Utils.*;
+}
+
+
+Phase:	Cleanup
+Input:  Split Sentence Token tmpProcedure tmpAnatomicalTerm namedDisease tmpDiseaseSense tmpDiseaseSenseContext poDisease preDisease suffDisease tmpDisease tmpAnatSuffAdj tmpAnatSuff tmpAnatPre tmpAnatPos tmpAnatSpace tmpAnatAdj tmpAnatLatin tmpAnatMuscle tmpAnatPart tmpAnatFluid poSymptom poTest poProcedure
+Options: control = all
+
+
+
+Rule: JoinConsecutiveDisease
+(
+	({poDisease} | {preDisease} | {suffDisease})
+	({poDisease} | {preDisease} | {suffDisease})
+):a
+-->
+:a {
+	Annotation ann = aAnnots.iterator().next();
+    FeatureMap fm = Factory.newFeatureMap();
+    fm.putAll(ann.getFeatures());
+    try {
+    	outputAS.add(start(aAnnots), end(aAnnots), "poDisease", fm);
+    	outputAS.removeAll(aAnnots);
+    } catch (InvalidOffsetException ie) {
+    	// shouldnt happen
+    }
+}
+
+
+Rule: JoinConsecutiveAnatomical
+(
+	{tmpAnatomicalTerm}
+	({Token.category == IN, Token.string ==~ "(?i)of|on"})?
+	{tmpAnatomicalTerm}
+):a
+-->
+:a {
+	Annotation ann = aAnnots.iterator().next();
+    FeatureMap fm = Factory.newFeatureMap();
+    fm.putAll(ann.getFeatures());
+    try {
+    	outputAS.add(start(aAnnots), end(aAnnots), "tmpAnatomicalTerm", fm);
+    	outputAS.removeAll(aAnnots);
+    } catch (InvalidOffsetException ie) {
+    	// shouldnt happen
+    }
+}
+
+
+Rule: RemoveAnatomyPre
+(
+	{tmpAnatomicalTerm}
+):a
+-->
+:a {
+	AnnotationSet tokAS = inputAS.get("Token", start(aAnnots), end(aAnnots) );
+	if ( !tokAS.isEmpty() ) {
+		Long tokEnd = end(tokAS);		
+		Long anatEnd = end(aAnnots);
+		if (anatEnd < tokEnd) {
+			outputAS.removeAll(aAnnots);
+		}
+	}
+}
+
+
+// Uncomment this rule and comment out the one above, to pick up more Latin terms but at the expense of precision
+/*
+Rule: RemoveAnatomyPre2
+(
+	{tmpAnatomicalTerm}
+):a
+-->
+:a {
+	AnnotationSet tokAS = inputAS.get("Token", start(aAnnots), end(aAnnots) );
+	if ( !tokAS.isEmpty() ) {
+		Long tokStart = start(tokAS);
+		Long tokEnd = end(tokAS);
+		if ( tokAS.size() == 1 ) {
+			Long anatEnd = end(aAnnots);
+			if (anatEnd < tokEnd) {
+				outputAS.removeAll(aAnnots);
+			}
+		} else {
+			Annotation ann = aAnnots.iterator().next();
+			FeatureMap anFm = ann.getFeatures();
+			FeatureMap fm = Factory.newFeatureMap();
+			fm.putAll(anFm);
+			try {
+				outputAS.add(tokStart, tokEnd, "tmpAnatomicalTerm", fm);
+				outputAS.removeAll(aAnnots);
+			} catch (InvalidOffsetException ie) {
+				//
+			}
+		}
+	}
+}
+*/
+
+
+
+
+/* Try adding this back in, may give false positives 
+Rule: RemoveAnatomicalInPreDisease
+(
+	{tmpAnatomicalTerm within preDisease}
+):a
+-->
+:a {
+	AnnotationSet ignore = (AnnotationSet)bindings.get("a");
+	outputAS.removeAll(ignore);
+}
+*/
+
+
+Rule: RemoveIncorrectAnatomical
+(
+	{tmpAnatomicalTerm@cleanString =~ "(?i)(Center|Centre)$"} 
+):a
+-->
+:a {
+	AnnotationSet ignore = (AnnotationSet)bindings.get("a");
+	outputAS.removeAll(ignore);
+}
+
+
+Rule: RemovePresentIllness
+(
+	{poDisease@cleanString ==~ "(?i)(present|family)\\s+illness"} |
+	(
+		{Token.string ==~ "(?i)(present|family)"}
+		{poDisease@cleanString ==~ "(?i)illness"}
+	)
+):a
+-->
+:a {
+	AnnotationSet ignore = (AnnotationSet)bindings.get("a");
+	outputAS.removeAll(ignore);
+}
+
+
+
+Rule: RemoveDiseaseInAnatomical
+(
+	{suffDisease within tmpAnatomicalTerm} |
+	{poDisease within tmpAnatomicalTerm} |
+	{tmpDisease within tmpAnatomicalTerm}
+):a
+-->
+:a {
+	AnnotationSet ignore = (AnnotationSet)bindings.get("a");
+	outputAS.removeAll(ignore);
+}
+
+
+Rule: RemoveTestInSymptom
+(
+	{poTest within poSymptom} |
+	{poTest within poProcedure}
+):a
+-->
+:a {
+	AnnotationSet ignore = (AnnotationSet)bindings.get("a");
+	outputAS.removeAll(ignore);
+}
+
+
+
+Rule: RemoveTemp
+(
+	{tmpProcedure} |
+	{namedDisease} | 
+	{tmpDiseaseSenseContext} |
+	{tmpDiseaseSense} |
+	{tmpDisease} |
+	{tmpAnatSuffAdj} |
+	{tmpAnatSuff} |
+	{tmpAnatPre} |
+	{tmpAnatPos} |
+	{tmpAnatSpace} |
+	{tmpAnatAdj} |
+	{tmpAnatLatin} |
+	{tmpAnatMuscle} |
+	{tmpAnatPart} |
+	{tmpAnatFluid}
+):a
+-->
+:a {
+	AnnotationSet ignore = (AnnotationSet)bindings.get("a");
+	outputAS.removeAll(ignore);
+}

@@ -1,0 +1,174 @@
+/*  
+* Filename: 		negation.jape
+* Author:			Phil Gooch
+* Copyright:		Phil Gooch 2012
+* Description:		Adds a negation feature to negated Mentions. Simple NegEx-type implementation 
+* Date created:		17/05/2012
+* This version:		0.1
+
+* 
+* 
+* Change history
+* ==========================================================================
+* Date				Version		Author		Description
+* ==========================================================================
+* 
+*/
+
+Imports: {
+	import static gate.Utils.*;
+	import java.io.*;
+}
+
+
+Phase:	MentionsNegated
+Input:  Split Token VG tmpAnatomicalTerm poProcedure poDisease preDisease suffDisease poSymptom poTest EVENT
+Options: control = all
+
+
+/* Need to include
+without, absent, absence of, free of, denied, denies, negative for, rules out, ruled out, rule out, rule PRP out
+any = neg - no evidence of any, nor any
+What about 'should|can|must|may not be ruled out', 'does not rule out', or 'is not negative for' ? - double negation => positive
+
+Problem with NegEx is that code contains hardcoded negation phrases: cannot be extended without code recompilation
+Also no consideration of POS, whether negated verb or negated noun phrase, negated prepositional phrase etc.
+*/
+
+
+MACRO: MENTION
+(
+	{tmpAnatomicalTerm} | {poProcedure} | {poDisease} | {preDisease} | {suffDisease} | {poSymptom} | {poTest} | {EVENT}
+)
+
+
+MACRO: TOKEN_WINDOW
+(
+	(
+		({Token.kind != punctuation, Token.string !=~ "(?i)not", !Split})[0, 3]
+	) |
+	(
+		({Token.kind == word, Token.string !=~ "(?i)not", !Split})[0, 5]
+	)
+)
+
+
+MACRO: ADD_NEGATION
+:m {
+	Set mentionSet = new HashSet<String>();
+	mentionSet.add("tmpAnatomicalTerm");
+	mentionSet.add("poProcedure");
+	mentionSet.add("poDisease");
+	mentionSet.add("preDisease");
+	mentionSet.add("suffDisease");
+	mentionSet.add("poSymptom");
+	mentionSet.add("poTest");
+	mentionSet.add("EVENT");
+	
+	AnnotationSet mentionAS = mAnnots.get(mentionSet);
+	for (Annotation ann : mentionAS) {
+		FeatureMap fm = ann.getFeatures();
+		fm.put("polarity", "NEG");
+	}
+}
+
+
+
+/* Add neg feature to concepts preceded or followed by a negating verb, e.g. should not be used: */
+Rule: MatchNegatedConcept
+(
+	(
+		{VG.neg == "yes", !VG@string =~ "(?i)den(y|ied)|exclude(d)?|rule(d)?"}
+		({Token.kind == word})[0,2]
+		{!Token.string ==~ "(?i)out", Token.kind != punctuation}
+		(
+			TOKEN_WINDOW
+			MENTION
+		)[1, 5]
+	) |
+	(
+		(MENTION)
+		{VG.neg == "yes", !VG@string =~ "(?i)excluded|denied|ruled"}
+		{!Token.string ==~ "(?i)out"}	
+	)
+):m
+-->ADD_NEGATION
+
+
+
+
+Rule: MatchNegatedConcept2
+(
+	{Token.string !=~ "(?i)not", !Token.string ==~ "(?i)not"}
+	(
+		(
+			{Token.string ==~ "(?i)nil|no|nor|any|devoid|deny|denie(s|d)|without|absen(t|ce)|exclude(d|s)|negative"}
+		) |
+		(
+			{Token.string ==~ "(?i)rule(s|d)?"}
+			({Token.kind == word})[0,2]
+			{Token.string ==~ "(?i)out"}
+		) |
+		(
+			{Token.string ==~ "(?i)free"}
+			{Token.string ==~ "(?i)of"}
+		)
+	)
+	(
+		TOKEN_WINDOW
+		MENTION
+	)[1, 5]
+):m
+-->:m {
+	Set mentionSet = new HashSet<String>();
+	mentionSet.add("tmpAnatomicalTerm");
+	mentionSet.add("poProcedure");
+	mentionSet.add("poDisease");
+	mentionSet.add("preDisease");
+	mentionSet.add("suffDisease");
+	mentionSet.add("poSymptom");
+	mentionSet.add("poTest");
+	mentionSet.add("EVENT");
+	
+	AnnotationSet mentionAS = mAnnots.get(mentionSet);
+	for (Annotation ann : mentionAS) {
+		FeatureMap fm = ann.getFeatures();
+		fm.put("polarity", "NEG");
+		fm.put("rule", "MatchNegatedConcept2");
+	}
+}
+
+
+/* E.g. pain free, tumour absent */
+Rule: MatchNegatedConcept3
+(
+	(
+		MENTION
+		TOKEN_WINDOW
+	)[1, 5]
+	(
+		(
+			{Token.string ==~ "(?i)denied|absent||excluded|negative|free"}
+		) |
+		(
+			{Token.string ==~ "(?i)ruled"}
+			{Token.string ==~ "(?i)out"}
+		)
+	)
+):m
+-->ADD_NEGATION
+
+
+
+Rule: MatchNegatedConcept4
+(
+	{tmpAnatomicalTerm@cleanString =~ "(?i)^(no|not|nor|any)\\b"} |
+	{poProcedure@cleanString =~ "(?i)^(no|not|nor|any)\\b"} |
+	{poDisease@cleanString =~ "(?i)^(no|not|nor|any)\\b"} |
+	{preDisease@cleanString =~ "(?i)^(no|not|nor|any)\\b"} |
+	{suffDisease@cleanString =~ "(?i)^(no|not|nor|any)\\b"} |
+	{poSymptom@cleanString =~ "(?i)^(no|not|nor|any)\\b"} |
+	{poTest@cleanString =~ "(?i)^(no|not|nor|any)\\b"} |
+	{EVENT@cleanString =~ "(?i)^(no|not|nor|any)\\b"}
+):m
+-->ADD_NEGATION

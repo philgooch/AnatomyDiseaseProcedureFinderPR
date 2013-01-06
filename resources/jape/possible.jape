@@ -1,0 +1,149 @@
+/*  
+* Filename: 		possible.jape
+* Author:			Phil Gooch
+* Copyright:		Phil Gooch 2012
+* Description:		Adds a possibility feature to possible Mentions. 
+* Date created:		05/08/2012
+* This version:		0.1
+
+* 
+* 
+* Change history
+* ==========================================================================
+* Date				Version		Author		Description
+* ==========================================================================
+* 
+*/
+
+Imports: {
+	import static gate.Utils.*;
+	import java.io.*;
+}
+
+
+Phase:	MentionsPossible
+Input:  Split Token VG tmpAnatomicalTerm poProcedure poDisease preDisease suffDisease poSymptom poTest EVENT
+Options: control = all
+
+
+
+MACRO: MENTION
+(
+	{tmpAnatomicalTerm} | {poProcedure} | {poDisease} | {preDisease} | {suffDisease} | {poSymptom} | {poTest} | {EVENT}
+)
+
+
+MACRO: ADD_POSSIBLE
+:m {
+	Set mentionSet = new HashSet<String>();
+	mentionSet.add("tmpAnatomicalTerm");
+	mentionSet.add("poProcedure");
+	mentionSet.add("poDisease");
+	mentionSet.add("preDisease");
+	mentionSet.add("suffDisease");
+	mentionSet.add("poSymptom");
+	mentionSet.add("poTest");
+	mentionSet.add("EVENT");
+	
+	AnnotationSet mentionAS = mAnnots.get(mentionSet);
+	for (Annotation ann : mentionAS) {
+		FeatureMap fm = ann.getFeatures();
+		fm.put("modality", "POSSIBLE");
+	}
+}
+
+
+
+/* Add possible feature to concepts preceded or followed by a modal verb, e.g. may be related to: */
+Rule: MatchPossibleConcept
+(
+	(
+		{VG.type == "MODAL"}
+		(
+			TOKEN_WINDOW
+			MENTION
+		)[1, 5]
+	) |
+	(
+		(MENTION)
+		{VG.type == "MODAL"}	
+	)
+):m
+-->ADD_POSSIBLE
+
+/* Does not rule out etc */
+Rule: MatchPossibleConcept1
+(
+	(
+		{VG.neg == "yes", VG@string =~ "(?i)rule(d)?"}
+		({Token.kind == word})[0,2]
+		{Token.string ==~ "(?i)out"}	
+		(
+			TOKEN_WINDOW
+			MENTION
+		)[1, 5]
+	) |
+	(
+		(MENTION)
+		{VG.neg == "yes", VG@string =~ "(?i)ruled"}
+		{Token.string ==~ "(?i)out"}
+	)
+):m
+-->ADD_POSSIBLE
+
+
+/* Does not exclude, deny etc */
+Rule: MatchPossibleConcept2
+(
+	(
+		{VG.neg == "yes", VG@string =~ "(?i)den(y|ied)|exclude(d)?"}
+		(
+			TOKEN_WINDOW
+			MENTION
+		)[1, 5]
+	) |
+	(
+		(MENTION)
+		{VG.neg == "yes", VG@string =~ "(?i)excluded|denied"}
+	)
+):m
+-->ADD_POSSIBLE
+
+
+Rule: MatchPossibleConcept3
+(
+	{Token.string ==~ "(?i)whether|if|possib(le|ility)|potential(ly)?|presum(e|ed|able|ably)|question(ed|able|ably)?|consistent|indicate(s|d)?|suggest(s|ed|ive)?|risk(s|ed)?"} 
+	(
+		TOKEN_WINDOW
+		MENTION
+	)[1, 5]
+):m
+-->ADD_POSSIBLE
+
+
+Rule: MatchPossibleConcept4
+(
+	(
+		MENTION
+		TOKEN_WINDOW
+	)[1, 5]
+	{Token.string ==~ "(?i)whether|if|possib(le|ility)|potential(ly)?|presum(e|ed|able|ably)|question(ed|able|ably)?|consistent|indicate(s|d)?|suggest(s|ed|ive)?|risk(s|ed)?"} 
+):m
+-->ADD_POSSIBLE
+
+
+
+Rule: MatchPossibleConcept5
+(
+	{tmpAnatomicalTerm@cleanString =~ "(?i)^possib(le|ility)|potential(ly)?|presum(e|ed|able)|question(ed|able)?|consistent|indicate(s)?|suggest(s|ive)?|risk(s)?"} |
+	{poProcedure@cleanString =~ "(?i)^possib(le|ility)|potential(ly)?|presum(e|ed|able)|question(ed|able)?|consistent|indicate(s)?|suggest(s|ive)?|risk(s)?"} |
+	{poDisease@cleanString =~ "(?i)^possib(le|ility)|potential(ly)?|presum(e|ed|able)|question(ed|able)?|consistent|indicate(s)?|suggest(s|ive)?|risk(s)?"} |
+	{preDisease@cleanString =~ "(?i)^possib(le|ility)|potential(ly)?|presum(e|ed|able)|question(ed|able)?|consistent|indicate(s)?|suggest(s|ive)?|risk(s)?"} |
+	{suffDisease@cleanString =~ "(?i)^possib(le|ility)|potential(ly)?|presum(e|ed|able)|question(ed|able)?|consistent|indicate(s)?|suggest(s|ive)?|risk(s)?"} |
+	{poSymptom@cleanString =~ "(?i)^possib(le|ility)|potential(ly)?|presum(e|ed|able)|question(ed|able)?|consistent|indicate(s)?|suggest(s|ive)?|risk(s)?"} |
+	{poTest@cleanString =~ "(?i)^possib(le|ility)|potential(ly)?|presum(e|ed|able)|question(ed|able)?|consistent|indicate(s)?|suggest(s|ive)?|risk(s)?"} |
+	{EVENT@cleanString =~ "(?i)^possib(le|ility)|potential(ly)?|presum(e|ed|able)|question(ed|able)?|consistent|indicate(s)?|suggest(s|ive)?|risk(s)?"}
+):m
+-->ADD_POSSIBLE
+
+

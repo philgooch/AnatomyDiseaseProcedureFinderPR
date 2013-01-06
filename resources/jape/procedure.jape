@@ -1,0 +1,77 @@
+Imports: {
+	import static gate.Utils.*;
+}
+
+
+Phase:	Procedure
+Input:  Split Sentence Token tmpProcedure poProcedure tmpAnatomicalTerm tmpAnatPre tmpAnatSuffAdj
+Options: control = appelt
+
+
+MACRO: ADD_PROCEDURE
+:d {
+    AnnotationSet tokAS = inputAS.get("Token", start(dAnnots), end(dAnnots) );
+	AnnotationSet postAS = (AnnotationSet)bindings.get("post");
+	Annotation postAnn = postAS.iterator().next();
+	FeatureMap postFM = postAnn.getFeatures();
+	FeatureMap fm = Factory.newFeatureMap();
+	fm.putAll(postFM);
+	fm.put("rule", "MatchAnatomyProcedure");
+	//outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poProcedure", fm);
+	if ( !tokAS.isEmpty() ) {
+		Long tokStart = start(tokAS);
+		Long tokEnd = end(tokAS);
+		Long annEnd = end(dAnnots);
+			if (annEnd < tokEnd) {
+				try {
+					outputAS.add(tokStart, tokEnd, "poProcedure", fm);
+				}  catch (InvalidOffsetException ie) {
+					//
+				} 
+			} else {
+				outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poProcedure", fm);
+			}
+	}
+	outputAS.removeAll(postAS);
+}
+
+
+Rule: MatchAnatomyProcedure
+(
+	({tmpAnatomicalTerm} | {tmpAnatPre} | {tmpAnatSuffAdj})[1, 2]
+	({tmpProcedure} | {poProcedure}):post
+):d
+-->ADD_PROCEDURE
+
+
+Rule: MatchAnatomyProcedure2
+(
+	({tmpProcedure} | {poProcedure}):post
+	({Token.category =~ "^DT|PRP"})?
+	({tmpAnatomicalTerm} | {tmpAnatPre})[1, 2]
+):d
+-->ADD_PROCEDURE
+
+
+
+Rule: MatchProcedureAnatomyPP
+(
+	({poProcedure} | {tmpProcedure}):pre
+	(
+		{Token.string ==~ "(?i)of|on|from|to|in|under|over|below|above"}
+		({Token.category =~ "^DT|PRP"})?
+	)?
+	{tmpAnatomicalTerm}
+):d
+-->
+:d {
+	AnnotationSet preAS = (AnnotationSet)bindings.get("pre");
+	Annotation preAnn = preAS.iterator().next();
+	FeatureMap preFM = preAnn.getFeatures();
+	FeatureMap fm = Factory.newFeatureMap();
+	fm.putAll(preFM);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poProcedure", fm);
+	outputAS.removeAll(preAS);
+}
+
+

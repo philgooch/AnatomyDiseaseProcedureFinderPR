@@ -1,0 +1,401 @@
+a1
+a2
+a3
+a4
+a5
+abdomen
+acetabulum
+acromion
+actin
+alveoli
+alveolus
+amygdala
+ankle
+anus
+aorta
+appendi(x|ce)
+arm
+arteriole
+arter(y|ie)
+atlas
+auricle
+axilla
+axon
+axoneme
+bartholin('s)? (duct|gland)
+bladder
+bowel
+brachii
+brachus
+brain
+brainstem
+breast
+brodmann('s)? area
+broca('s)? area
+bronchi
+bronchiole
+bronchii
+bronchus
+bursa
+bursi
+buttock
+c0
+(c1-c?2)
+c1
+(c2-c?3)
+c2
+(c3-c?4)
+c3
+(c4-c?5)
+c4
+(c5-c?6)
+c5
+(c6-c?7)
+c6
+(c7-t1)
+c7
+c8
+Cajal cell
+calcaneus
+calf
+calyx
+capillary bed
+capillar(y|ie)
+capitate( bone)?
+carpus
+cartilage
+b-cell
+b cell
+p cell
+p-cell
+t-cell
+t cell
+cell
+cerebrum
+cerebell(i|a|um)
+cervical
+cervix
+cheek
+chest
+chin
+cilium
+clavicle
+coccyx
+colon
+column
+concha
+condyle
+conjunctiva
+connective tissue
+cornea
+corona
+cortex
+cranium
+crown pulp
+cuboid bone
+cuneiform bone
+dendrite
+dental pulp
+diaphragm
+dorsi
+dorsum
+duodenum
+ductule
+dura mater
+dura
+ear
+elbow
+embryo
+endocardium
+endometrium
+endoneurium
+ependyma
+epicondyle
+epiglottis
+esophagus
+ethmoid( bone)?
+extremit(y|ie)
+eye
+eyeball
+eyebrow
+eyelid
+fascia
+fasciae
+femur
+fetus
+fiber
+fibre
+fibril
+fibrilla
+fibrocartilage
+fibula
+filament
+finger
+fingernail
+foetus
+follicle
+forebrain
+foregut
+foramen
+foramina
+fossa
+fornix
+foot
+forearm
+forehead
+fossa
+fossi
+fovea
+frontal bone
+gallbladder
+gangli(a|on)
+genital(ia)?
+gland
+glans
+glia
+golgi
+gonad
+granule
+gray matter
+grey matter
+groin
+gut
+gyrus
+hair
+hamate( bone)?
+hand
+head
+heart
+hindbrain
+hindgut
+hip
+hippocampus
+humerus
+hymen
+hyoid( bone)?
+ilium
+incisor
+incus
+insula
+integument
+intestine
+iris
+jaw
+kidney
+knee
+(l1-l?2)
+l1
+(l2-l?3)
+l2
+(l3-l?4)
+l3
+(l4-l?5)
+l4
+(l5-s1)
+l5
+labium
+labia
+lacrimal( bone)?
+lamina
+lamella
+langerhans (cell|duct)
+leydig('s)? cell
+large intestine
+larynx
+leaf
+leaflet
+leg
+lens
+lid
+ligament
+limb
+limbus
+lingula
+lip
+liver
+lobe
+lobule
+lumen
+lunate( bone)?
+lung
+macula
+malleus
+mandible
+manubrium
+manus
+maxilla
+meatus
+membrane
+meninges
+merkel('s)? cell
+mesentery
+metacarpus
+metatarsus
+microtubule
+midbrain
+molar
+mouth
+mucosa
+muscle
+myocardium
+myofibril
+nail bed
+nail
+nasal bone
+nasal conchae
+nasopharynx
+navicular( bone)?
+neck
+nephron
+nerve
+neuron
+nipple
+node
+nodule
+nose
+nostril
+nucleii
+nucleus
+occipital( bone)?
+oesophagus
+oropharynx
+ostium
+ovar(y|ie)
+palate
+palatine( bone)?
+pancreas
+papilla
+parenchyma
+parietal( bone)?
+patella
+pedicle
+pelvis
+penis
+pericardium
+perikaryon
+peroneum
+phalange
+phalanx
+pharynx
+pisiform( bone)?
+pons
+premolar
+prostate
+radius
+rami
+ramus
+rectum
+red pulp
+retina
+rib
+root pulp
+sac
+sacrum
+scalp
+scaphoid( bone)?
+scapula
+schwann cell
+scapha
+sclera
+scrotum
+serosa
+sheath
+shin
+shoulder
+skin
+skull
+small intestine
+soma
+somata
+spermatozoon
+spermatozoa
+sperm
+sphenoid( bone)?
+sphincter
+spinal cord
+spine
+spleen
+stapes
+sternum
+stem cell
+stomach
+subramus
+subserosa
+sweat gland
+(t10-t?11)
+t10
+(t11-t?12)
+t11
+t12
+(t1-t?2)
+t1
+(t2-t?3)
+t2
+(t3-t?4)
+t3
+(t4-t?5)
+t4
+(t5-t?6)
+t5
+(t6-t?7)
+t6
+(t7-t?8)
+t7
+(t8-t?9)
+t8
+(t9-t?10)
+t9
+talus
+tarsus
+teeth
+temple
+tendon
+testicle
+testes
+testis
+thigh
+thorax
+throat
+thumb
+thymus
+thyroid
+tibia
+tissue
+toe
+toenail
+tongue
+tonsil
+tooth
+trachea
+tract
+trapezium
+trapezoid( bone)?
+tree
+triquetral( bone)?
+trochanter
+trunk
+tuber
+tubercle
+tubule
+tunica
+ulna
+ureter
+urethra
+uterus
+vagina
+valvule
+vein
+vena cava
+venae cavae
+ventricle
+venule
+vertebra
+vertebrae
+vesicle
+vessel
+vomer
+white matter
+white pulp
+wrist
+xiphoid
+zygomatic( bone)?

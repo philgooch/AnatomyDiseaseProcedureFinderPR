@@ -1,0 +1,236 @@
+Imports: {
+	import static gate.Utils.*;
+}
+
+
+Phase:	Anatomy
+Input:  Split Sentence Token poDisease preDisease suffDisease tmpAnatPre tmpAnatSuffAdj tmpAnatSuff tmpAnatPos tmpAnatSpace tmpAnatAdj tmpAnatLatin tmpAnatMuscle tmpAnatPart tmpAnatFluid
+Options: control = appelt
+
+
+MACRO: DT
+(
+	{Token.category == DT, Token.string !=~ "(?i)any|some|that|this|those"}
+)
+
+
+MACRO: ALL_TERMS
+(
+	{tmpAnatPre, tmpAnatPre notWithin poDisease, tmpAnatPre notWithin preDisease, tmpAnatPre notWithin suffDisease} |
+	{tmpAnatSuffAdj} |
+	{tmpAnatSuff, tmpAnatSuff notWithin preDisease} |
+	{tmpAnatPos} |
+	{tmpAnatSpace} |
+	{tmpAnatAdj} |
+	{tmpAnatLatin} |
+	{tmpAnatMuscle} |
+	{tmpAnatPart} |
+	{tmpAnatFluid}
+)
+
+
+MACRO: ANAT_ADJ
+(
+	{tmpAnatSuffAdj} |
+	{tmpAnatAdj} 
+	| {Token.category =~ "^JJ|NN", Token.string =~ "(?i)(ate|ous|ent|ior|iac|ian|ic(a)?|id|ine|ive|al(e)?|ar|ary|ory)$", Token.string !~ "ritic$", Token@length > 6}	// may lead to false positives, need to see if worth doing or list all adjectives
+)
+
+
+MACRO: PRE
+(
+	{tmpAnatPos} |
+	(ANAT_ADJ)
+)
+
+MACRO: SAFE_PRE
+(
+	{tmpAnatSuffAdj} |
+	{tmpAnatAdj} |
+	{tmpAnatPos}
+)
+
+MACRO: PART
+(
+	{tmpAnatPre, tmpAnatPre notWithin poDisease, tmpAnatPre notWithin preDisease, tmpAnatPre notWithin suffDisease} |
+	{tmpAnatSuff, tmpAnatSuff notWithin preDisease} | 
+	{tmpAnatPart} | 
+	{tmpAnatFluid} | 
+	{tmpAnatMuscle} | 
+	{tmpAnatLatin}
+)
+
+
+Rule: MatchAdjOnly
+(
+	(DT)?
+	({tmpAnatPos})[0, 5]
+	{tmpAnatAdj}
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAdjOnly"}
+
+
+
+Rule: MatchAnatomicalTermSpacePP
+(
+	(DT)?
+	(PRE)[0, 5]
+	{tmpAnatSpace}
+	({tmpAnatPos})?
+	{Token.category == IN, Token.string ==~ "(?i)of|on"}
+	({Token.category =~ "DT"})?
+	(PRE)[0, 5]
+	(PART)[1, 5]
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalTermSpacePP"}
+
+
+Rule: MatchAnatomicalTermSpacePP3
+(
+	(DT)?
+	(PRE)[0, 5]
+	({tmpAnatSpace} | (PART) )
+	{Token.category == IN, Token.string ==~ "(?i)of|on"}
+	({Token.category =~ "DT"})?
+	(PRE)[1, 5]
+	({tmpAnatSpace} | (PART) )[1, 5]
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalTermSpacePP3"}
+
+
+Rule: MatchAnatomicalTermPP
+(
+	(DT)?
+	(PRE)[0, 5]
+	(PART)[1, 5]
+	{Token.category == IN, Token.string ==~ "(?i)of|on"}
+	({Token.category =~ "DT"})?
+	(PRE)[0, 5]
+	(PART)[1, 5]
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalTermPP"}
+
+
+Rule: MatchAnatomicalTerm
+(
+	(DT)?
+	(PRE)[0, 5]
+	(PART)[1, 5]
+	({tmpAnatPos@string =~ "(?i)or|is$"})?
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalTerm"}
+
+
+
+
+Rule: MatchFluidGeneric
+(
+	(DT)?
+	(PRE)[1, 5]
+	{Token.string ==~"(?i)fluid"}
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchFluidGeneric"}
+
+
+
+Rule: MatchAnatomicalTermSpace
+(
+	(DT)?
+	(PRE)[0, 5]
+	(PART)[1, 5]
+	(PRE)?
+	({tmpAnatSpace})[1, 2]
+	({tmpAnatPos})?
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalTermSpace"}
+
+
+Rule: MatchAnatomicalLatinSpaceTerm
+(
+	(DT)?
+	({tmpAnatSpace})[1, 2]
+	(PART)[1, 5]
+	({tmpAnatPos})?
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalLatinSpaceTerm"}
+
+
+Rule: MatchAnatomicalTermSpacePP2
+(
+	(DT)?
+	(PRE)[0, 5]
+	(PART)[1, 5]
+	{Token.category == IN, Token.string ==~ "(?i)of|on"}
+	(DT)?
+	(PRE)[0, 5]
+	(PART)[1, 5]
+	(PRE)?
+	({tmpAnatSpace})[1, 2]
+	({tmpAnatPos})?
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalTermSpacePP2"}
+
+
+
+Rule: MatchAnatomicalTermSpace2
+(
+	(DT)?
+	(PRE)[1, 5]		// change to (SAFE_PRE) to possibly improve precision
+	({tmpAnatSpace})[1, 2]
+	({tmpAnatPos})?
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalTermSpace2"}
+
+
+// Possibly ambiguous - reduces precision by 7% but increases recall by 4% in ODIE corpus
+/*
+Rule: MatchAnatomicalTermSpace3
+(
+	(DT)?
+	({tmpAnatSpace})[1, 2]
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchAnatomicalTermSpace3"}
+*/
+
+Rule: MatchRepeatableOR
+(
+	(DT)?
+	(
+		(ALL_TERMS)[1, 5]
+		{Token.category == IN, Token.string ==~ "(?i)of|on"}
+		({Token.category =~ "DT"})?
+		(ALL_TERMS)[1, 5]
+	)[1, 5]
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchRepeatableOR"}
+
+
+Rule: MatchRepeatableOR2
+(
+	(DT)?
+	(ALL_TERMS)[1, 5]
+	{Token.category == IN, Token.string ==~ "(?i)of|on"}
+	(
+		({Token.category =~ "DT"})?
+		(ALL_TERMS)[1, 5]
+		{Token.category == IN, Token.string ==~ "(?i)of|on"}
+	)[1, 5]
+	(DT)?
+	(PRE)[0, 3]
+	({tmpAnatSpace} | (PART))[1, 2]
+):a
+-->
+:a.tmpAnatomicalTerm={rule="MatchRepeatableOR2"}
+

@@ -1,0 +1,33 @@
+[^r\W]alysis
+ectomy
+ectomie
+ograft
+ogram
+ograph
+ography
+ographie
+# ological
+# ology
+# ologie
+ometry
+ometrie
+oplasty
+oplastie
+opsy
+opsie
+oscope
+oscopy
+oscopi(e|c)
+ostomy
+ostomie
+otomy
+otomie
+plasty
+plastie
+scope
+scopy
+scopie
+stomy
+stomie
+therapy
+therapie

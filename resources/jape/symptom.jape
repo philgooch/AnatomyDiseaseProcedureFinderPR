@@ -1,0 +1,48 @@
+Imports: {
+	import static gate.Utils.*;
+}
+
+
+Phase:	Symptom
+Input:  Split Sentence Token poSymptom tmpAnatomicalTerm
+Options: control = appelt
+
+
+Rule: MatchAnatomySymptom
+(
+	({tmpAnatomicalTerm})
+	({poSymptom}):post
+):d
+-->
+:d {
+	AnnotationSet postAS = (AnnotationSet)bindings.get("post");
+	Annotation postAnn = postAS.iterator().next();
+	FeatureMap postFM = postAnn.getFeatures();
+	FeatureMap fm = Factory.newFeatureMap();
+	fm.putAll(postFM);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poSymptom", fm);
+	outputAS.removeAll(postAS);
+}
+
+
+Rule: MatchSymptomAnatomyPP
+(
+	({poSymptom}):pre
+	(
+		{Token.string ==~"(?i)of|on|from|to|in|under|over|below|above"}
+		({Token.category =~ "^DT|PRP"})?
+	)?
+	{tmpAnatomicalTerm}
+):d
+-->
+:d {
+	AnnotationSet preAS = (AnnotationSet)bindings.get("pre");
+	Annotation preAnn = preAS.iterator().next();
+	FeatureMap preFM = preAnn.getFeatures();
+	FeatureMap fm = Factory.newFeatureMap();
+	fm.putAll(preFM);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poSymptom", fm);
+	outputAS.removeAll(preAS);
+}
+
+

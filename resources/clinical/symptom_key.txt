@@ -1,0 +1,73 @@
+ach(e|ing)
+angina
+anxi(ous|ety)
+black(ed|ing)? out
+bleeding
+bloat(ing|ed)?
+breathlessness
+boil(s)?
+bumps
+burning
+chills
+choking
+complaint
+constipat(ion|ed)
+confus(ed|ion)
+cough(ing)?
+cramp(s|ing)?
+delirium
+depression
+diarrhea
+diarrhoea
+difficulty
+# discharge
+discomfort
+disorient(ed|ation)
+dizz(y|iness)
+dry mouth
+fatigue
+fever
+hair loss
+headache
+indigestion
+insomnia
+irritab(le|ility)
+itch(ing)?
+letharg(y|ic)
+libido
+lightheaded(ness)?
+low mood
+mania
+mood swings
+mood changes
+murmurs
+pain
+panic
+paralys(is|ed)
+nause(a|ous)
+numb(ness)?
+overdose
+problem
+pruritus
+shortness of breath
+sleepless(ness)?
+sore(ness)?
+sore throat
+sneez(e|ing)?
+sweat(s|ing)
+suicid(al|e)
+swelling
+swollen
+symptom(s)?
+tender(ness)?
+tension
+tingle
+tingling
+tinnitus
+tired(ness)?
+vertigo
+vomiting
+weak(ness)?
+weight (gain|loss)
+wind
+withdrawal

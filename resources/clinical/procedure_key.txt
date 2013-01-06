@@ -1,0 +1,82 @@
+# non-neoclassical key words that identify a potential procedure mention in the noun phrase 
+agent
+an(a)?esthetic
+blocker
+dos(e|age)
+x(-| )?ray
+routine care
+palliative care
+pastoral care
+catheteri(s|z)ation
+catheteri(s|z)e
+catheter insertion
+catheter
+insertion of catheter
+ct(-| )?scan
+ct
+diet
+debride(d|ment)?
+drain
+drip
+enema
+epidural
+exercise
+excision
+extubat(e|ed|ion)
+incision
+# inject
+injection
+imaging
+intubat(e|ed|ion)
+medication
+mri(-| )?scan
+mri
+operation
+perfusion scan
+pet(-| )?scan
+pet
+procedure
+prophylaxis
+prophylactic
+rehabilitation
+regimen
+# resect
+resection
+resuscitat(e|ed|ion)
+revascularization
+shunt
+stent
+steroid
+surgery
+surgical
+suture
+suturing
+therapy
+# transfuse
+transfusion
+transplant
+transplantation
+treatment
+prescription
+ultrasound
+wound closure
+wound dressing
+oral(ly)?
+otic
+buc(cal)?
+sub-q
+sub q
+per g.?t.?
+intra-?ocular
+parenteral
+subcutaneous
+sublingual
+intra-?articular
+intra-?dermal
+intra-?muscular
+intra-?thecal
+intra-?venous
+intra-?vesical
+intra-?vitreal
+topical
+transdermal

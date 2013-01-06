@@ -1,0 +1,17 @@
+# key words that require an anatomical term preceding or following in order to be considered a procedure mention
+bypass graft
+bypass
+cast
+closure
+decompress(ion)?
+film
+operation
+oxygen
+puncture
+replacement
+retraction
+scan
+shunt
+splint
+transplant
+tube insertion

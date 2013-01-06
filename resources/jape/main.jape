@@ -1,0 +1,11 @@
+MultiPhase:	Terms
+Phases: 
+VerbGroups
+anatomy
+disease
+procedure
+symptom
+test
+negation
+possible
+cleanup

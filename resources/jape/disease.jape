@@ -1,0 +1,133 @@
+Imports: {
+	import static gate.Utils.*;
+}
+
+
+Phase:	Disease
+Input:  Split Sentence Token namedDisease preDisease suffDisease poDisease tmpDisease tmpDiseaseSense tmpDiseaseSenseContext tmpAnatomicalTerm tmpAnatPre tmpAnatSuffAdj
+Options: control = appelt
+
+
+MACRO: ADD_DISEASE
+:d {
+    AnnotationSet tokAS = inputAS.get("Token", start(dAnnots), end(dAnnots) );
+	AnnotationSet postAS = (AnnotationSet)bindings.get("post");
+	Annotation postAnn = postAS.iterator().next();
+	FeatureMap postFM = postAnn.getFeatures();
+	FeatureMap fm = Factory.newFeatureMap();
+	fm.putAll(postFM);
+	fm.put("rule", "MatchAnatomyDisease");
+	//outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poDisease", fm);
+	if ( !tokAS.isEmpty() ) {
+		Long tokStart = start(tokAS);
+		Long tokEnd = end(tokAS);
+		Long annEnd = end(dAnnots);
+			if (annEnd < tokEnd) {
+				try {
+					outputAS.add(tokStart, tokEnd, "poDisease", fm);
+				}  catch (InvalidOffsetException ie) {
+					//
+				} 
+			} else {
+				outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poDisease", fm);
+			}
+	}
+	outputAS.removeAll(postAS);
+}
+
+
+Rule: MatchAnatomyDisease
+(
+	({tmpAnatomicalTerm} | {tmpAnatPre} | {tmpAnatSuffAdj})[1, 2]
+	({tmpDisease} | {poDisease} | {preDisease} | {suffDisease}):post
+):d
+-->ADD_DISEASE
+
+
+Rule: MatchAnatomyDisease2
+(
+	({tmpDisease} | {poDisease} | {preDisease} | {suffDisease}):post
+	({tmpAnatomicalTerm} | {tmpAnatPre})[1, 2]
+):d
+-->ADD_DISEASE
+
+
+
+Rule: MatchDiseaseAnatomyPP
+(
+	({tmpDisease} | {poDisease} | {preDisease} | {suffDisease}):pre
+	{Token.string ==~ "(?i)of|on|from|to|in|under|over|below|above"}
+	({Token.category =~ "^DT|PRP"})?
+	{tmpAnatomicalTerm}
+):d
+-->
+:d {
+	AnnotationSet preAS = (AnnotationSet)bindings.get("pre");
+	Annotation preAnn = preAS.iterator().next();
+	FeatureMap preFM = preAnn.getFeatures();
+	FeatureMap fm = Factory.newFeatureMap();
+	fm.putAll(preFM);
+	fm.put("rule", "MatchDiseaseAnatomyPP");
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poDisease", fm);
+	outputAS.removeAll(preAS);
+}
+
+
+/* E.g. Pick's disease, Asperger's syndrome */
+Rule: MatchNamedDisease
+(
+	{namedDisease}
+	(
+		{preDisease@string =~ "^dys"} |
+		{poDisease} |
+		{suffDisease}
+	)
+):d
+-->
+:d {
+	outputAS.removeAll(dAnnots);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poDisease", Factory.newFeatureMap() );
+}
+
+
+Rule: MatchNamedDiseaseAbbrev
+{Token.string ==~ "(?i)with|for|from|have|has|develop(s)?|contract(s)?"}
+(
+	{namedDisease@string =~ "'(s)?$"}
+):d
+-->
+:d {
+	outputAS.removeAll(dAnnots);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poDisease", Factory.newFeatureMap() );
+}
+
+
+Rule: MatchDiseaseSense
+(
+	(
+		{tmpDiseaseSense}
+		{tmpDiseaseSenseContext}
+	)
+):d
+-->
+:d {
+	outputAS.removeAll(dAnnots);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poDisease", Factory.newFeatureMap() );
+}
+
+
+
+Rule: MatchDiseaseSensePP
+(
+	{tmpDiseaseSenseContext}
+	({Token.kind == word})[0,2]
+	({Token.string ==~ "(?i)in|with"})?
+	{tmpDiseaseSense}
+):d
+-->
+:d {
+	outputAS.removeAll(dAnnots);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poDisease", Factory.newFeatureMap() );
+}
+
+

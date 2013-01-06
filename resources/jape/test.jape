@@ -1,0 +1,48 @@
+Imports: {
+	import static gate.Utils.*;
+}
+
+
+Phase:	Test
+Input:  Split Sentence Token poTest tmpAnatomicalTerm
+Options: control = appelt
+
+
+Rule: MatchAnatomyTest
+(
+	({tmpAnatomicalTerm})
+	({poTest}):post
+):d
+-->
+:d {
+	AnnotationSet postAS = (AnnotationSet)bindings.get("post");
+	Annotation postAnn = postAS.iterator().next();
+	FeatureMap postFM = postAnn.getFeatures();
+	FeatureMap fm = Factory.newFeatureMap();
+	fm.putAll(postFM);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poTest", fm);
+	outputAS.removeAll(postAS);
+}
+
+
+Rule: MatchTestAnatomyPP
+(
+	({poTest}):pre
+	(
+		{Token.string ==~"(?i)of|on|from|to|in|under|over|below|above"}
+		({Token.category =~ "^DT|PRP"})?
+	)?
+	{tmpAnatomicalTerm}
+):d
+-->
+:d {
+	AnnotationSet preAS = (AnnotationSet)bindings.get("pre");
+	Annotation preAnn = preAS.iterator().next();
+	FeatureMap preFM = preAnn.getFeatures();
+	FeatureMap fm = Factory.newFeatureMap();
+	fm.putAll(preFM);
+	outputAS.add(dAnnots.firstNode(), dAnnots.lastNode(), "poTest", fm);
+	outputAS.removeAll(preAS);
+}
+
+

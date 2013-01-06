@@ -1,0 +1,5 @@
+<CREOLE-DIRECTORY ID="org.philgooch.AnatomyDiseaseProcedureFinder" VERSION="0.1" GATE-MIN="7.0" DESCRIPTION="Annotates anatomical, disease and procedure terms using morpheme-based regexes.">
+  <CREOLE>
+      <JAR SCAN="true">AnatomyDiseaseProcedureFinderPR.jar</JAR>
+  </CREOLE>
+</CREOLE-DIRECTORY>

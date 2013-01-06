@@ -1,0 +1,29 @@
+# Disease, medication, symptoms, procedure morphemes
+# ===================================================
+disease_suffix: clinical/disease_suffix.txt
+disease_abbrevs: clinical/disease_abbrevs.txt
+disease_sense: clinical/disease_sense.txt
+disease_sense_context: clinical/disease_sense_key.txt
+disease_named_syndrome: clinical/disease_named_syndrome.txt
+disease_generic_context: clinical/disease_generic_key.txt
+disease_anatomy_context: clinical/disease_anatomy_key.txt
+procedure_suffix: clinical/procedure_suffix.txt
+procedure_key: clinical/procedure_key.txt
+# procedure_route: clinical/procedure_route.txt
+procedure_anatomy_context: clinical/procedure_anatomy_key.txt
+symptom_key: clinical/symptom_key.txt
+test_key: clinical/test_key.txt
+
+# Anatomy morphemes extracted from the FMA
+# ===================================================
+anatomy_suffix: anatomy/anatomy_suffix.txt
+anatomy_suffix_adjective: anatomy/anatomy_suffix_adjective.txt
+anatomy_prefix: anatomy/anatomy_prefix.txt
+anatomy_position: anatomy/anatomy_position.txt
+anatomy_part_adjective: anatomy/anatomy_part_adjective.txt
+anatomy_space_region_junction: anatomy/anatomy_space_region_junction.txt
+anatomy_part: anatomy/anatomy_part.txt
+anatomy_fluid: anatomy/anatomy_fluid.txt
+anatomy_muscle: anatomy/anatomy_muscle_key.txt
+# Latin words
+anatomy_latin_noun: anatomy/anatomy_latin_noun.txt

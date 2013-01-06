@@ -1,0 +1,15 @@
+abductor
+adductor
+buccinator
+corrugator
+deltoid
+depressor
+extensor
+flexor
+levator
+obturator
+pronator
+rotator
+supinator
+tensor
+teres
