@@ -1,4 +1,5 @@
 # key words that require an anatomical term preceding or following in order to be considered a procedure mention
+amputat(e|ed|ion)
 bypass graft
 bypass
 cast

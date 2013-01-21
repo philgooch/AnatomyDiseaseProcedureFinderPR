@@ -1,4 +1,5 @@
 # non-neoclassical key words that identify a potential procedure mention in the noun phrase 
+ablat(e|ed|ion)
 agent
 an(a)?esthetic
 blocker
