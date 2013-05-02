@@ -26,9 +26,13 @@ disorient(ed|ation)
 dizz(y|iness)
 dry mouth
 fatigue
+feel(ing)? ill
+feel(ing)? unwell
+feel(ing)? sick
 fever
 hair loss
 headache
+ill
 indigestion
 insomnia
 irritab(le|ility)
@@ -49,6 +53,7 @@ numb(ness)?
 overdose
 problem
 pruritus
+sick
 shortness of breath
 sleepless(ness)?
 sore(ness)?
@@ -65,6 +70,7 @@ tingle
 tingling
 tinnitus
 tired(ness)?
+unwell
 vertigo
 vomiting
 weak(ness)?
