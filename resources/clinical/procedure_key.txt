@@ -2,6 +2,7 @@
 ablat(e|ed|ion)
 agent
 an(a)?esthetic
+anti-?[\w]+(ic|ant|amine)
 blocker
 dos(e|age)
 x(-| )?ray
