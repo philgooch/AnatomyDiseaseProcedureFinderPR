@@ -81,8 +81,7 @@ public class ConfigReader {
                 try {
                     in.close();
                 } catch (IOException iee) {
-                    gracefulExit = true;
-                    gate.util.Err.println("Unable to close " + in);
+                    gate.util.Err.println("Warning: unable to close stream " + in);
                 }
             }
         }
@@ -124,8 +123,7 @@ public class ConfigReader {
                     try {
                         in.close();
                     } catch (IOException iee) {
-                    	gracefulExit = true;
-                    	gate.util.Err.println("Unable to close " + in);
+                    	gate.util.Err.println("Warning: unable to close stream " + in);
                     }
                 }
             }
